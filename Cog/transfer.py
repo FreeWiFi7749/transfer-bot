@@ -51,9 +51,18 @@ class TransferCog(commands.Cog):
                 webhook = webhooks[0] if webhooks else await dest_channel.create_webhook(name='Transfer Webhook')
 
                 async with aiohttp.ClientSession() as session:
-                    await webhook.send(
-                        content=msg.content, 
-                        username=msg.author.display_name, 
-                        avatar_url=msg.author.avatar,
-                        wait=True
-                    )
+                    if msg.content:  # メッセージが空でない場合のみ送信
+                        await webhook.send(
+                            content=msg.content, 
+                            username=msg.author.display_name, 
+                            avatar_url=msg.author.avatar,
+                            wait=True
+                        )
+                    elif msg.attachments:  # 添付ファイルがある場合、それを送信
+                        for attachment in msg.attachments:
+                            await webhook.send(
+                                content=f"{msg.author.display_name} が添付ファイルを送信しました",
+                                avatar_url=msg.author.avatar,
+                                wait=True,
+                                file=await attachment.to_file()
+                            )

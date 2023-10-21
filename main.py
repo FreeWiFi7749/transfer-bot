@@ -28,8 +28,12 @@ bot = commands.Bot(command_prefix="!", help_command=JapaneseHelpCommand(), inten
 async def _reload(ctx, cog_name: str):
     """Bot管理者専用コマンド"""
     try:
-        bot.load_extension(cog_name)
+        cog_path = f'Cog.{cog_name}'  
+        bot.unload_extension(cog_path)  
+        bot.load_extension(cog_path)  
         await ctx.send(f'{cog_name} をリロードしました。')
+    except commands.ExtensionNotLoaded as e:
+        await ctx.send(f'{cog_name} はまだロードされていません。')
     except Exception as e:
         await ctx.send(f'{cog_name} のリロード中にエラーが発生しました：{e}')
         
