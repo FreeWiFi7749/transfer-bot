@@ -10,12 +10,6 @@ class TransferCog(commands.Cog):
         self.channel_mapping = {}
         self.load_mapping()
 
-        @bot.command()
-        async def set_channels_slash(ctx: commands.Context, source_channel: discord.TextChannel, dest_channel: discord.TextChannel):
-            self.channel_mapping[str(source_channel.id)] = dest_channel.id
-            self.save_mapping()
-            await ctx.respond(f"Set source channel to {source_channel.name} and destination channel to {dest_channel.name}")
-
     def save_mapping(self):
         with open("channels.json", "w") as f:
             json.dump(self.channel_mapping, f)
@@ -29,9 +23,20 @@ class TransferCog(commands.Cog):
 
     @commands.command()
     async def set_channels(self, ctx, source_channel: discord.TextChannel, dest_channel: discord.TextChannel):
+        """チャンネルを設定します"""
         self.channel_mapping[str(source_channel.id)] = dest_channel.id
         self.save_mapping()
-        await ctx.send(f"Set source channel to {source_channel.name} and destination channel to {dest_channel.name}")
+        await ctx.send(f"{source_channel.mention}のメッセージを{dest_channel.mention}に送信します")
+
+    @commands.command()
+    async def remove_channels(self, ctx, source_channel: discord.TextChannel):
+        """設定したチャンネル設定を消去します"""
+        if str(source_channel.id) in self.channel_mapping:
+            del self.channel_mapping[str(source_channel.id)]
+            self.save_mapping()
+            await ctx.send(f"{source_channel.mention}のメッセージの転送を停止しました")
+        else:
+            await ctx.send(f"{source_channel.mention}は設定されていません")
 
     @commands.Cog.listener()
     async def on_message(self, msg):

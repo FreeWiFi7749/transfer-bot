@@ -6,4 +6,5 @@ class PingCog(commands.Cog):
 
     @commands.command(name='ping')
     async def ping(self, ctx):
-        await ctx.send(f'Pong! {round(self.bot.latency * 1000)}ms')
+        """BotのPINGを送信します"""
+        await ctx.send(f'Pong! \n{round(self.bot.latency * 1000)}ms')
