@@ -7,10 +7,9 @@ import aiohttp
 class TransferCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.channel_mapping = {}  # 追加
+        self.channel_mapping = {}
         self.load_mapping()
 
-        # スラッシュコマンドの追加
         @bot.command()
         async def set_channels_slash(ctx: commands.Context, source_channel: discord.TextChannel, dest_channel: discord.TextChannel):
             self.channel_mapping[str(source_channel.id)] = dest_channel.id
@@ -26,7 +25,7 @@ class TransferCog(commands.Cog):
             with open("channels.json", "r") as f:
                 self.channel_mapping = json.load(f)
         except FileNotFoundError:
-            pass  # ファイルがない場合は何もしない
+            pass  
 
     @commands.command()
     async def set_channels(self, ctx, source_channel: discord.TextChannel, dest_channel: discord.TextChannel):
